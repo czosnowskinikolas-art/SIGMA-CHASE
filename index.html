@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goonbound</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<div id="wrap">
+<div id="levelSelect">
+  <h1>SIGMA CHASE</h1>
+  <div class="subtitle">SELECT A LEVEL — ALL LEVELS UNLOCKED</div>
+  <div class="levelGrid">
+    <button class="levelBtn" data-level="1">LEVEL 1<span class="small">GREEN GOBLIN</span></button>
+    <button class="levelBtn" data-level="2">LEVEL 2<span class="small">DESERT MADNESS</span></button>
+    <button class="levelBtn" data-level="3">LEVEL 3<span class="small">GHOST MANIA</span></button>
+    <button class="levelBtn" data-level="4">LEVEL 4<span class="small">PLANETARY INSANITY</span></button>
+    <button class="levelBtn" id="level5Btn" data-level="5">LEVEL 5<span class="small">THE END</span></button>
+  </div>
+  <div style="margin-top:34px;font-size:22px;font-weight:1000;letter-spacing:2px;text-transform:uppercase;">SPECIAL LEVELS</div>
+  <div class="levelGrid specialGrid" style="margin-top:16px;">
+    <button class="levelBtn" data-level="101">SPECIAL 1<span class="small">MUSHROOM FRENZY</span></button>
+    <button class="levelBtn" data-level="102">SPECIAL 2<span class="small">CREEPY CASTLE</span></button>
+    <button class="levelBtn" data-level="103">SPECIAL 3<span class="small">PIRATE CHAOS</span></button>
+    <button class="levelBtn" data-level="104">SPECIAL 4<span class="small">STOOD BRAWL</span></button>
+    <button class="levelBtn" data-level="105">SPECIAL 5<span class="small">MALICIOUS MARS</span></button>
+  </div>
+</div>
+
+<canvas id="game" width="1200" height="700"></canvas>
+<div id="hud"></div>
+<div id="healthUI"><div>HEALTH <span id="healthPct">100%</span></div><div id="healthBar"><div id="healthFill"></div></div></div>
+<div id="special5PinkTimerUI">PINK POWER: 20s</div>
+<div id="bossUI" style="display:none;position:absolute;z-index:65;left:50%;top:18px;transform:translateX(-50%);width:620px;pointer-events:none;text-align:center;filter:drop-shadow(0 5px 0 rgba(0,0,0,.35));">
+<div style="font-weight:1000;color:#ff4545;font-size:25px;text-shadow:3px 3px 0 #250000;letter-spacing:2px;margin-bottom:6px;">MOON GOON</div>
+<div style="height:28px;border:4px solid #fff;border-radius:16px;background:#23070b;overflow:hidden;box-shadow:0 0 18px rgba(255,40,40,.65);"><div id="bossFill" style="height:100%;width:100%;background:linear-gradient(90deg,#8b0000,#ff1e38,#ff6b6b);transition:width .18s;"></div></div>
+<div id="bossText" style="margin-top:4px;color:white;font-weight:1000;font-size:14px;text-shadow:2px 2px 0 #250000;">100%</div>
+<div id="special5EvolutionTaunt" style="display:none;margin-top:4px;color:#ff2222;font-weight:1000;font-size:17px;text-shadow:2px 2px 0 #250000;">You didn't do your homework!</div>
+</div>
+<div id="special4BossUI" style="display:none;position:absolute;z-index:66;left:50%;top:18px;transform:translateX(-50%);width:620px;pointer-events:none;text-align:center;filter:drop-shadow(0 5px 0 rgba(0,0,0,.35));">
+<div style="font-weight:1000;color:#ff4545;font-size:25px;text-shadow:3px 3px 0 #250000;letter-spacing:2px;margin-bottom:6px;">STOOD</div>
+<div style="height:28px;border:4px solid #fff;border-radius:16px;background:#23070b;overflow:hidden;box-shadow:0 0 18px rgba(255,40,40,.65);"><div id="special4BossFill" style="height:100%;width:100%;background:linear-gradient(90deg,#8b0000,#ff1e38,#ff6b6b);transition:width .18s;"></div></div>
+<div id="special4BossText" style="margin-top:4px;color:white;font-weight:1000;font-size:14px;text-shadow:2px 2px 0 #250000;">100%</div>
+</div>
+<div id="stoodUI" style="display:none;position:absolute;z-index:66;left:50%;top:122px;transform:translateX(-50%);width:430px;pointer-events:none;text-align:center;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));">
+<div style="font-weight:1000;color:#ff9b22;font-size:21px;text-shadow:3px 3px 0 #251000;letter-spacing:2px;margin-bottom:5px;">STOOD</div>
+<div style="height:22px;border:3px solid #fff;border-radius:14px;background:#251304;overflow:hidden;box-shadow:0 0 15px rgba(255,145,0,.7);"><div id="stoodFill" style="height:100%;width:100%;background:linear-gradient(90deg,#ff7a00,#ffad42,#ffd07b);transition:width .18s;"></div></div>
+<div id="stoodText" style="margin-top:3px;color:white;font-weight:1000;font-size:13px;text-shadow:2px 2px 0 #251000;">100%</div>
+</div>
+<div id="endScreen" style="position:absolute;inset:0;z-index:120;background:rgba(5,5,8,.94);display:none;align-items:center;justify-content:center;flex-direction:column;color:white;text-align:center;">
+<h1 style="font-size:72px;color:#ffd75a;text-shadow:0 6px 0 #7a4310;margin:0 0 10px;font-weight:1000;">YOU WIN!</h1><p style="font-size:24px;font-weight:900;margin:0;">Press R to restart</p>
+</div>
+
+<div id="title">SIGMA CHASE</div>
+<div id="msg" style="display:none"><h1>GOONBOUND</h1><p>Press SPACE to start</p></div>
+<div id="pooOverlay"><div class="pooFace">💩<div style="font-size:34px;font-weight:900;color:white;text-shadow:3px 3px 0 #3b1a0c">SPLAT!</div></div></div>
+<div id="shroomText">GOONSHROOM<span class="drips">•••••</span></div>
+<button id="musicBtn">🎵 MUSIC ON</button>
+<div id="controls">A/D or ←/→ move &nbsp; • &nbsp; SPACE jump &nbsp; • &nbsp; R restart</div>
+</div>
+
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<script src="js/soundcloud_special4.js" defer></script>
+
+<script src="js/game.js" defer></script>
+
+<audio id="level4BossMusic" preload="auto" src="assets/audio_01.mp3"></audio>
+<audio id="level4PunchSound" preload="auto" src="assets/audio_02.mp3"></audio>
+<img id="special4MegaSprite" alt="" style="display:none" src="assets/image_05.jpg">
+<img id="special4SigmaSprite" alt="" style="display:none" src="assets/image_16.jpg">
+<img id="special4StoodSprite" alt="" style="display:none" src="assets/image_17.jpg">
+<img id="level4MoonGoonSprite" alt="" style="display:none" src="assets/image_18.jpg">
+<audio id="snowSplashSound" preload="auto" src="assets/audio_03.mp3"></audio>
+<audio id="pooSplashSound" preload="auto" src="assets/audio_03.mp3"></audio>
+<audio id="bgMusic" src="assets/audio_04.wav" loop preload="auto"></audio>
+
+<audio id="goonVoice1" src="assets/audio_05.wav" preload="auto"></audio>
+<audio id="goonVoice2" src="assets/audio_06.wav" preload="auto"></audio>
+<audio id="splatSound" src="assets/audio_07.wav" preload="auto"></audio><audio id="witchSound" src="assets/audio_08.wav" preload="auto"></audio><audio id="bossGrowl1" preload="auto" src="assets/audio_09.mp3"></audio><audio id="bossGrowl2" preload="auto" src="assets/audio_10.mp3"></audio><audio id="bossMusic" preload="auto" src="assets/audio_11.mp3"></audio>
+<audio id="deathSound" preload="auto" src="assets/audio_12.mp3"></audio><audio id="plantHitSound" preload="auto" src="assets/audio_13.mp3"></audio>
+
+<audio id="miniGoonSound" preload="auto" src="assets/audio_14.mp3"></audio>
+<audio id="level1GoonHitSound" preload="auto" src="assets/audio_15.mp3"></audio>
+<audio id="level2BossMusic" preload="auto" src="assets/audio_16.mp3"></audio>
+<audio id="level2ZombieScream" preload="auto" src="assets/audio_17.mp3"></audio>
+
+<audio id="level3BossMusic" preload="auto" src="assets/audio_18.mp3"></audio>
+<audio id="level3GhostScream" preload="auto" src="assets/audio_19.mp3"></audio>
+<audio id="level4MoonPhase80" preload="auto" src="assets/audio_20.mp3"></audio><audio id="level4MoonPhase50" preload="auto" src="assets/audio_21.mp3"></audio><audio id="level4MoonPhase20" preload="auto" src="assets/audio_22.mp3"></audio><audio id="level5ParkourHitSound" preload="auto" src="assets/audio_23.mp3"></audio>
+<audio id="level1BossMusic" preload="auto" src="assets/audio_24.mp3"></audio>
+<audio id="stoodHissSound" preload="auto" src="assets/audio_25.mp3"></audio>
+
+<img id="special1EddithSprite" alt="" style="display:none" src="assets/image_04.jpg">
+<audio id="special1Music" preload="auto" src="assets/audio_26.mp3"></audio>
+<audio id="special1WetFart" preload="auto" src="assets/audio_27.mp3"></audio>
+<img id="special2GoonImage" alt="Golden Goon" style="display:none" src="assets/image_19.jpg">
+<audio id="wetFartSpecial2" preload="auto" src="assets/audio_27.mp3"></audio>
+<audio id="special2ComeHere" preload="auto" src="assets/audio_28.mp3"></audio>
+<audio id="special2CreepyLaugh" preload="auto" src="assets/audio_29.mp3"></audio>
+<audio id="special2CreepyPiano" preload="auto" src="assets/audio_30.mp3"></audio>
+<div id="special2Timer" style="display:none;position:absolute;z-index:60;left:50%;top:18px;transform:translateX(-50%);color:#ffd66b;font-weight:1000;font-size:24px;text-shadow:3px 3px 0 #250000;letter-spacing:2px;pointer-events:none;">SURVIVED  00:00.0</div>
+<script src="js/ui_patch.js" defer></script>
+
+<!-- Special 3 audio restored -->
+<audio id="special3PirateGrowl" src="assets/audio_31.mp3"></audio>
+<audio id="special3CannonShot" src="assets/audio_32.mp3"></audio>
+<audio id="special3CannonFire" src="assets/audio_33.mp3"></audio>
+<audio id="special3Music" loop src="assets/audio_34.mp3"></audio>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<audio id="special4EpicDragonRoar" preload="auto" src="assets/audio_35.mp3"></audio>
+<audio id="special4MonsterRoar" preload="auto" src="assets/audio_36.mp3"></audio>
+
+<audio id="special4ChargeRoar" preload="auto" src="assets/audio_37.mp3"></audio>
+<audio id="special4DistantBang" preload="auto" src="assets/audio_38.mp3"></audio>
+
+<audio id="special4SeaMonsterScream" preload="auto" src="assets/audio_39.mp3"></audio>
+<audio id="special4WerewolfGrowl" preload="auto" src="assets/audio_40.mp3"></audio>
+<audio id="special5ExplorerGrowlySound" preload="auto" src="assets/audio_41.mp3"></audio>
+<audio id="special5ExplorerDragonVoiceSound" preload="auto" src="assets/audio_42.mp3"></audio>
+<audio id="special5ExplorerThunderDragonSound" preload="auto" src="assets/audio_43.mp3"></audio>
+<audio id="special5ExplorerSound" preload="auto" src="assets/audio_44.mp3"></audio>
+</body>
+</html>
